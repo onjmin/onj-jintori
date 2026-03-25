@@ -130,6 +130,7 @@ const SWARM_ATTACK_RANGE = 200;        // 敵検知距離(px)
 const SWARM_REJOIN_TIMEOUT = 10000;    // 分離後の復帰タイムアウト(ms)
 
 const EMOJIS = ['😀', '😎', '😂', '😍', '🤔', '🤠', '😈', '👻', '👽', '🤖', '💩', '🐱', '🐶', '🦊', '🦁', '🐷', '🦄', '🐲'];
+const ALLOWED_FLAGS = ['', '🇯🇵', '🇺🇸', '🇬🇧', '🇰🇷', '🇨🇳', '🇹🇼', '🇩🇪', '🇫🇷', '🇮🇹', '🇪🇸', '🇧🇷', '🇷🇺', '🇺🇦', '🇮🇳', '🇦🇺', '🇨🇦', '🇲🇽', '🇸🇦', '🇹🇭', '🇻🇳', '🇵🇭', '🇻🇪', '🍂'];
 const GAME_MODES = ['SOLO', 'TEAM'];
 
 // チーム固定色（RED/BLUE/GREEN/YELLOWのみ。それ以外のチームは各プレイヤーがランダム色）
@@ -339,6 +340,7 @@ module.exports = {
     SWARM_ATTACK_RANGE,
     SWARM_REJOIN_TIMEOUT,
     EMOJIS,
+    ALLOWED_FLAGS,
     GAME_MODES,
     TEAM_COLORS,
     CPU_TEAM_NAME,

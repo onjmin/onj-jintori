@@ -10,10 +10,60 @@ const config = require('./config');
 const botAuth = require('./bot-auth');
 const cpu = require('./cpu');
 const bench = require('./bench-monitor');
-const { GAME_MODES, TEAM_COLORS, CPU_TEAM_NAME, TANUKI_TEAM_NAME, HUMAN_VS_BOT, BOOST_DURATION, BOOST_COOLDOWN, JET_CHARGE_TIME, TURTLE_MODE, JET_ENABLED, FORCE_JET, IMAGE_ENABLED, GRID_SIZE, state, bandwidthStats } = config;
+const { GAME_MODES, TEAM_COLORS, CPU_TEAM_NAME, TANUKI_TEAM_NAME, HUMAN_VS_BOT, BOOST_DURATION, BOOST_COOLDOWN, JET_CHARGE_TIME, TURTLE_MODE, JET_ENABLED, FORCE_JET, IMAGE_ENABLED, GRID_SIZE, EMOJIS, ALLOWED_FLAGS, state, bandwidthStats } = config;
 
 // IP別接続数の追跡（同一IP 2窓制限）
 const ipConnectionCount = new Map();
+
+// BANリスト（不正データ送信IP）- Map<IP, expiresAt>
+const bannedIPs = new Map();
+const BAN_DURATION = 10 * 60 * 1000; // 10分間BAN
+
+function banIP(ip, reason) {
+    bannedIPs.set(ip, Date.now() + BAN_DURATION);
+    console.log(`[BAN] IP ${ip} banned for ${BAN_DURATION / 1000}s: ${reason}`);
+}
+
+function isIPBanned(ip) {
+    const expiresAt = bannedIPs.get(ip);
+    if (!expiresAt) return false;
+    if (Date.now() >= expiresAt) {
+        bannedIPs.delete(ip);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * チーム名から国旗部分を抽出して検証する
+ * @returns {{ flag: string, teamBody: string, valid: boolean }}
+ */
+function extractAndValidateFlag(teamStr) {
+    if (!teamStr) return { flag: '', teamBody: '', valid: true };
+    const chars = Array.from(teamStr);
+
+    // 特殊プレフィックス絵文字（🍂など）
+    const SPECIAL_FLAG_EMOJIS = ['🍂'];
+    if (chars.length >= 1 && SPECIAL_FLAG_EMOJIS.includes(chars[0])) {
+        const flag = chars[0];
+        const teamBody = chars.slice(1).join('');
+        return { flag, teamBody, valid: ALLOWED_FLAGS.includes(flag) };
+    }
+
+    // 国旗（Regional Indicator Symbol 2文字）
+    if (chars.length >= 2) {
+        const first = chars[0].codePointAt(0);
+        const second = chars[1].codePointAt(0);
+        if (first >= 0x1F1E6 && first <= 0x1F1FF && second >= 0x1F1E6 && second <= 0x1F1FF) {
+            const flag = chars[0] + chars[1];
+            const teamBody = chars.slice(2).join('');
+            return { flag, teamBody, valid: ALLOWED_FLAGS.includes(flag) };
+        }
+    }
+
+    // 国旗なし
+    return { flag: '', teamBody: teamStr, valid: true };
+}
 
 // ゴーストペナルティデータへの参照（server.v5.jsから設定）
 let ipQuickDeathDataRef = null;
@@ -65,6 +115,13 @@ function setupConnectionHandler() {
         const isCloudFlare = !!req.headers['cf-connecting-ip'];
         if (!isCloudFlare) {
             console.log(`[WARN] Connection without CF-Connecting-IP header from: ${ip}`);
+        }
+
+        // BANチェック
+        if (isIPBanned(ip)) {
+            console.log(`[BAN] Rejected connection from banned IP: ${ip}`);
+            ws.close(4099, 'You are banned');
+            return;
         }
 
         // 同一IP 2窓制限
@@ -389,41 +446,61 @@ async function handleJsonMessage(data, p, id, byteLen) {
         bandwidthStats.received.join += byteLen;
         
         // ============================================================
-        // 入力値バリデーション
+        // 入力値バリデーション（不正値はBAN）
         // ============================================================
         const rawName = data.name || '';
         const rawTeam = data.team || '';
-        
-        // 名前の長さチェック（8文字制限）
+
+        // 名前の長さチェック（8文字制限）- 超過はBAN
         const nameChars = Array.from(rawName.replace(/[\[\]]/g, '').trim());
         if (nameChars.length > 8) {
-            console.log(`[KICK] ${id} (IP: ${p.ip}): Name too long (${nameChars.length} chars)`);
+            banIP(p.ip, `Name too long (${nameChars.length} chars)`);
             if (p.ws.readyState === WebSocket.OPEN) {
-                p.ws.close(4001, 'Invalid name length');
+                p.ws.close(4001, 'You are banned: invalid name length');
             }
             return;
         }
-        
-        // チーム名の長さチェック（5文字制限）
+
+        // チーム名の長さチェック（5文字制限）- 超過はBAN
         const teamChars = Array.from(rawTeam.replace(/[\[\]]/g, ''));
         if (teamChars.length > 5) {
-            console.log(`[KICK] ${id} (IP: ${p.ip}): Team name too long (${teamChars.length} chars)`);
+            banIP(p.ip, `Team name too long (${teamChars.length} chars)`);
             if (p.ws.readyState === WebSocket.OPEN) {
-                p.ws.close(4002, 'Invalid team name length');
+                p.ws.close(4002, 'You are banned: invalid team name length');
             }
             return;
         }
-        
-        // 不正な制御文字チェック
+
+        // 不正な制御文字チェック - BAN
         const controlCharRegex = /[\x00-\x1f\x7f]/;
         if (controlCharRegex.test(rawName) || controlCharRegex.test(rawTeam)) {
-            console.log(`[KICK] ${id} (IP: ${p.ip}): Invalid control characters`);
+            banIP(p.ip, `Invalid control characters in name/team`);
             if (p.ws.readyState === WebSocket.OPEN) {
-                p.ws.close(4003, 'Invalid characters');
+                p.ws.close(4003, 'You are banned: invalid characters');
             }
             return;
         }
-        
+
+        // 国旗バリデーション（許可リスト外はBAN）
+        const flagResult = extractAndValidateFlag(rawTeam);
+        if (!flagResult.valid) {
+            banIP(p.ip, `Invalid flag in team name: ${rawTeam}`);
+            if (p.ws.readyState === WebSocket.OPEN) {
+                p.ws.close(4004, 'You are banned: invalid flag');
+            }
+            return;
+        }
+
+        // チーム本体部分（国旗除く）の長さチェック（3文字制限）- 超過はBAN
+        const teamBodyChars = Array.from(flagResult.teamBody.replace(/[\[\]]/g, ''));
+        if (teamBodyChars.length > 3) {
+            banIP(p.ip, `Team body too long (${teamBodyChars.length} chars, flag excluded)`);
+            if (p.ws.readyState === WebSocket.OPEN) {
+                p.ws.close(4002, 'You are banned: invalid team name length');
+            }
+            return;
+        }
+
         // ============================================================
         // 正常処理
         // ============================================================
@@ -471,8 +548,19 @@ async function handleJsonMessage(data, p, id, byteLen) {
             }
         }
 
-        // join時にemoji指定があれば上書き
-        if (data.emoji) p.emoji = data.emoji;
+        // join時にemoji指定があれば上書き（1絵文字のみ許可）
+        if (data.emoji) {
+            // Intl.Segmenterで書記素クラスタ数を判定（ZWJ sequence, flag, keycap等すべて1クラスタ）
+            const isOneEmoji = typeof data.emoji === 'string' &&
+                [...new Intl.Segmenter().segment(data.emoji)].length === 1 &&
+                /\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Regional_Indicator}/u.test(data.emoji);
+            if (isOneEmoji) {
+                p.emoji = data.emoji;
+            } else {
+                // 不正な絵文字はランダム絵文字に置換
+                p.emoji = game.getRandomEmoji();
+            }
+        }
 
         // プレイヤー画像のバリデーション＆保存（ソロモードのみ。チーム戦はチーム画像提案で管理）
         if (IMAGE_ENABLED && !p.team && data.img && typeof data.img === 'string' && data.img.length <= 140000) {
@@ -519,14 +607,38 @@ async function handleJsonMessage(data, p, id, byteLen) {
         }
     } else if (data.type === 'update_team') {
         bandwidthStats.received.updateTeam += byteLen;
-        // 国旗対応: コードポイント単位で5文字まで
         const rawTeam = data.team || '';
         const reqTeamChars = Array.from(rawTeam.replace(/[\[\]]/g, ''));
-        
-        // チーム名の長さチェック
+
+        // チーム名の長さチェック（5文字超過はBAN）
         if (reqTeamChars.length > 5) {
-            console.log(`[WARN] ${id}: Team update too long, truncating`);
+            banIP(p.ip, `update_team: Team name too long (${reqTeamChars.length} chars)`);
+            if (p.ws.readyState === WebSocket.OPEN) {
+                p.ws.close(4002, 'You are banned: invalid team name length');
+            }
+            return;
         }
+
+        // 国旗バリデーション（許可リスト外はBAN）
+        const utFlagResult = extractAndValidateFlag(rawTeam);
+        if (!utFlagResult.valid) {
+            banIP(p.ip, `update_team: Invalid flag: ${rawTeam}`);
+            if (p.ws.readyState === WebSocket.OPEN) {
+                p.ws.close(4004, 'You are banned: invalid flag');
+            }
+            return;
+        }
+
+        // チーム本体部分（国旗除く）の長さチェック（3文字制限）
+        const utBodyChars = Array.from(utFlagResult.teamBody.replace(/[\[\]]/g, ''));
+        if (utBodyChars.length > 3) {
+            banIP(p.ip, `update_team: Team body too long (${utBodyChars.length} chars)`);
+            if (p.ws.readyState === WebSocket.OPEN) {
+                p.ws.close(4002, 'You are banned: invalid team name length');
+            }
+            return;
+        }
+
         let reqTeam = reqTeamChars.slice(0, 5).join('');
         // CPU専用チームへの参加をブロック
         if (reqTeam === CPU_TEAM_NAME) reqTeam = '';
