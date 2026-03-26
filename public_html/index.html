@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>onj-Jintori(新鯖)</title>
-    <link rel="stylesheet" href="style.css?v=2603041607">
+    <link rel="stylesheet" href="style.css?v=2603260420">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/msgpack-lite@0.1.26/dist/msgpack.min.js"></script>
 </head>
@@ -38,7 +38,20 @@
                     <i class="fas fa-angles-down" id="login-cup-expand-icon" onclick="toggleCupExpand('login')" style="color:#cbd5e1; cursor:pointer; font-size:8px; opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
                 </div>
             </div>
-            <input type="text" id="username-input" class="login-input" placeholder="名前を入力 (任意)" maxlength="8">
+            <div style="display:flex; gap:5px; align-items:center;">
+                <div id="emoji-picker-wrapper" style="position:relative;">
+                    <button type="button" id="emoji-picker-btn" onclick="toggleEmojiPicker()" style="width:70px; height:44px; font-size:1.4rem; background:#0f172a; border:1px solid #334155; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">🎲</button>
+                    <input type="hidden" id="emoji-select" value="">
+                    <div id="emoji-picker-popup" style="display:none; position:absolute; top:50px; left:0; z-index:1000; background:#0f172a; border:1px solid #475569; border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,0.5); width:280px; padding:0; overflow:hidden;">
+                        <div id="emoji-picker-tabs" style="display:flex; gap:2px; padding:6px 8px; background:#0f172a; overflow-x:auto; scrollbar-width:none;"></div>
+                        <div id="emoji-picker-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; max-height:200px; overflow-y:auto; scrollbar-width:thin; background:#1e293b; padding:8px;"></div>
+                        <div style="text-align:center; padding:6px 8px; background:#0f172a;">
+                            <button type="button" onclick="selectEmoji('')" style="background:#334155; color:#94a3b8; border:none; border-radius:6px; padding:4px 12px; font-size:0.75rem; cursor:pointer;">🎲 ランダムに戻す</button>
+                        </div>
+                    </div>
+                </div>
+                <input type="text" id="username-input" class="login-input" placeholder="名前を入力 (任意)" maxlength="8" style="flex:1;">
+            </div>
             <div style="display:flex; gap:5px; margin-top:10px; align-items:center;">
                 <select id="flag-select" class="login-input" style="width:70px; padding:8px 4px; font-size:1.2rem; cursor:pointer;">
                     <option value="">🏳️ なし</option>
@@ -386,10 +399,12 @@
                 <div style="display:flex; gap:5px;">
                     <input type="text" id="chat-input" placeholder="コメント (最大15文字)" maxlength="15"
                         style="flex:1; padding:8px; border-radius:6px; border:1px solid #475569; background:#1e293b; color:#fff; font-size:14px;"
-                        onkeydown="if(event.key==='Enter') sendChat()">
+                        onkeydown="if(event.key==='Enter') sendChat()"
+                        onfocus="showChatHistory()" onclick="showChatHistory()">
                     <button onclick="sendChat()"
                         style="padding:8px 15px; border-radius:6px; background:#3b82f6; color:#fff; border:none; cursor:pointer; font-size:14px; font-weight:bold;">送信</button>
                 </div>
+                <div id="chat-history-dropdown" style="display:none; position:absolute; bottom:100%; left:0; right:60px; background:#334155; border:1px solid #475569; border-radius:6px; margin-bottom:4px; max-height:200px; overflow-y:auto; z-index:10;"></div>
                 <div id="next-round-msg" style="margin-top:8px; color:#94a3b8; text-align:center;">15秒後に次のラウンドへ...</div>
             </div>
         </div>
@@ -592,10 +607,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 
     <!-- Client Scripts (分離版) -->
-    <script src="client/client-config.js?v=2603041607"></script>
-    <script src="client/client-network.js?v=2603041607"></script>
-    <script src="client/client-game.js?v=2603041607"></script>
-    <script src="client/client-ui.js?v=2603041607"></script>
+    <script src="client/client-config.js?v=2603260420"></script>
+    <script src="client/client-network.js?v=2603260420"></script>
+    <script src="client/client-game.js?v=2603260420"></script>
+    <script src="client/client-ui.js?v=2603260420"></script>
 </body>
 
 </html>

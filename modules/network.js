@@ -451,13 +451,10 @@ async function handleJsonMessage(data, p, id, byteLen) {
         const rawName = data.name || '';
         const rawTeam = data.team || '';
 
-        // 名前の長さチェック（8文字制限）- 超過はBAN
+        // 名前の長さチェック（8文字制限）- 超過は無視
         const nameChars = Array.from(rawName.replace(/[\[\]]/g, '').trim());
         if (nameChars.length > 8) {
-            banIP(p.ip, `Name too long (${nameChars.length} chars)`);
-            if (p.ws.readyState === WebSocket.OPEN) {
-                p.ws.close(4001, 'You are banned: invalid name length');
-            }
+            console.log(`[WARN] ${id}: Name too long (${nameChars.length} chars), ignored`);
             return;
         }
 
@@ -471,13 +468,10 @@ async function handleJsonMessage(data, p, id, byteLen) {
             return;
         }
 
-        // 不正な制御文字チェック - BAN
+        // 不正な制御文字チェック - 反映せず無視
         const controlCharRegex = /[\x00-\x1f\x7f]/;
         if (controlCharRegex.test(rawName) || controlCharRegex.test(rawTeam)) {
-            banIP(p.ip, `Invalid control characters in name/team`);
-            if (p.ws.readyState === WebSocket.OPEN) {
-                p.ws.close(4003, 'You are banned: invalid characters');
-            }
+            console.log(`[WARN] ${id}: Invalid characters in name/team, ignored`);
             return;
         }
 

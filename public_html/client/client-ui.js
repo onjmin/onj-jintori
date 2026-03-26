@@ -2,6 +2,96 @@
 // client-ui.js - UI・モーダル・画面
 // ============================================
 
+// ============================================
+// 絵文字ピッカー
+// ============================================
+const EMOJI_CATEGORIES = {
+    '😀': ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','😉','😊','😇','🥰','😍','🤩','😘','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','😐','😑','😶','😏','😒','🙄','😬','🤥','😌','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🥵','🥶','🥴','😵','🤯','🤠','🥳','🥸','😎','🤓','🧐','😕','😟','🙁','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥','😢','😭','😱','😖','😣','😞','😩','😫','🥱','😤','😡','😠','🤬','😈','👿','💀','☠️','💩','🤡','👹','👺','👻','👽','👾','🤖'],
+    '🐱': ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🙈','🙉','🙊','🐒','🐔','🐧','🐦','🐤','🐣','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🪱','🐛','🦋','🐌','🐞','🐜','🪰','🪲','🦟','🦗','🕷️','🦂','🐢','🐍','🦎','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🦬','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐈','🐓','🦃','🦤','🦚','🦜','🦢','🦩','🕊️','🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿️','🦔','🐉','🐲'],
+    '🍎': ['🍏','🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌶️','🫑','🌽','🥕','🫒','🧄','🧅','🥔','🍠','🥐','🥯','🍞','🥖','🥨','🧀','🥚','🍳','🧈','🥞','🧇','🥓','🥩','🍗','🍖','🦴','🌭','🍔','🍟','🍕','🫓','🥪','🥙','🧆','🌮','🌯','🫔','🥗','🥘','🫕','🥫','🍝','🍜','🍲','🍛','🍣','🍱','🥟','🦪','🍤','🍙','🍚','🍘','🍥','🥠','🥮','🍢','🍡','🍧','🍨','🍦','🥧','🧁','🍰','🎂','🍮','🍭','🍬','🍫','🍿','🍩','🍪','🌰','🥜','🍯','🥛','🍼','🫖','☕','🍵','🧃','🥤','🧋','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🧊'],
+    '⚽': ['⚽','🏀','🏈','⚾','🥎','🎾','🏐','🏉','🥏','🎱','🪀','🏓','🏸','🏒','🥍','🏑','🥅','⛳','🪁','🏹','🎣','🤿','🥊','🥋','🎽','🛹','🛼','🛷','⛸️','🥌','🎿','⛷️','🏂','🪂','🏋️','🤸','🤺','⛹️','🤾','🏌️','🏇','🧘','🏄','🏊','🤽','🚣','🧗','🚴','🚵','🎖️','🏆','🥇','🥈','🥉','🎗️','🎫','🎟️','🎪','🎭','🎨','🎬','🎤','🎧','🎼','🎹','🥁','🪘','🎷','🎺','🪗','🎸','🪕','🎻','🎲','♟️','🎯','🎳','🎮','🕹️','🎰'],
+    '🚗': ['🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🏍️','🛵','🚲','🛴','🛺','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇','🚊','🚉','✈️','🛫','🛬','🛩️','💺','🛰️','🚀','🛸','🚁','🛶','⛵','🚤','🛥️','🛳️','⛴️','🚢','⚓','🪝','⛽','🚧','🚦','🚥','🗺️','🗿','🗽','🗼','🏰','🏯','🏟️','🎡','🎢','🎠','⛲','⛱️','🏖️','🏝️','🏜️','🌋','⛰️','🏔️','🗻','🏕️','🛖','🏠','🏡','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪','🏫','🏩','💒','🏛️','⛪','🕌','🕍','🛕','🕋','⛩️'],
+    '💡': ['⌚','📱','📲','💻','⌨️','🖥️','🖨️','🖱️','🖲️','🕹️','💽','💾','💿','📀','📼','📷','📸','📹','🎥','📽️','🎞️','📞','☎️','📟','📠','📺','📻','🎙️','🎚️','🎛️','🧭','⏱️','⏲️','⏰','🕰️','⌛','⏳','📡','🔋','🔌','💡','🔦','🕯️','🪔','🧯','🛢️','💸','💵','💴','💶','💷','🪙','💰','💳','💎','⚖️','🪜','🧰','🪛','🔧','🔨','⚒️','🛠️','⛏️','🪚','🔩','⚙️','🪤','🧱','⛓️','🧲','🔫','💣','🧨','🪓','🔪','🗡️','⚔️','🛡️','🚬','⚰️','🪦','⚱️','🏺','🔮','📿','🧿','💈','⚗️','🔭','🔬','🕳️','🩹','🩺','💊','💉','🩸','🧬','🦠','🧫','🧪','🌡️','🧹','🪠','🧺','🧻','🧼','🪥','🧽','🧴','🛎️','🔑','🗝️','🚪','🪑','🛋️','🛏️','🛌','🧸','🪆','🖼️','🪞','🪟','🛍️','🛒','🎁','🎈','🎏','🎀','🪄','🪅','🎊','🎉','🎎','🏮','🎐','🧧','✉️','📩','📨','📧','💌','📥','📤','📦','🏷️','🪧','📪','📫','📬','📭','📮','📯','📜','📃','📄','📑','🧾','📊','📈','📉','🗒️','🗓️','📆','📅','🗑️','📇','🗃️','🗳️','🗄️','📋','📁','📂','🗂️','🗞️','📰','📓','📔','📒','📕','📗','📘','📙','📚','📖','🔖','🧷','🔗','📎','🖇️','📐','📏','🧮','📌','📍','✂️','🖊️','🖋️','✒️','🖌️','🖍️','📝','✏️','🔍','🔎','🔏','🔐','🔒','🔓'],
+    '❤️': ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','☮️','✝️','☪️','🕉️','☸️','✡️','🔯','🕎','☯️','☦️','🛐','⛎','♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓','🆔','⚛️','🉑','☢️','☣️','📴','📳','🈶','🈚','🈸','🈺','🈷️','✴️','🆚','💮','🉐','㊙️','㊗️','🈴','🈵','🈹','🈲','🅰️','🅱️','🆎','🆑','🅾️','🆘','❌','⭕','🛑','⛔','📛','🚫','💯','💢','♨️','🚷','🚯','🚳','🚱','🔞','📵','🚭','❗','❕','❓','❔','‼️','⁉️','🔅','🔆','〽️','⚠️','🚸','🔱','⚜️','🔰','♻️','✅','🈯','💹','❇️','✳️','❎','🌐','💠','Ⓜ️','🌀','💤','🏧','🚾','♿','🅿️','🛗','🈳','🈂️','🛂','🛃','🛄','🛅','🚹','🚺','🚻','🚮','🎦','📶','🈁','🔣','ℹ️','🔤','🔡','🔠','🆖','🆗','🆙','🆒','🆕','🆓','0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟','🔢','#️⃣','*️⃣','⏏️','▶️','⏸️','⏯️','⏹️','⏺️','⏭️','⏮️','⏩','⏪','⏫','⏬','◀️','🔼','🔽','➡️','⬅️','⬆️','⬇️','↗️','↘️','↙️','↖️','↕️','↔️','↪️','↩️','⤴️','⤵️','🔀','🔁','🔂','🔄','🔃','🎵','🎶','➕','➖','➗','✖️','♾️','💲','💱','™️','©️','®️','👁️‍🗨️','🔚','🔙','🔛','🔝','🔜','〰️','➰','➿','✔️','☑️','🔘','🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪','🟤','🔺','🔻','🔸','🔹','🔶','🔷','🔳','🔲','▪️','▫️','◾','◽','◼️','◻️','🟥','🟧','🟨','🟩','🟦','🟪','⬛','⬜','🟫','🔈','🔇','🔉','🔊','🔔','🔕','📣','📢','🃏','🀄','🎴','🔇','🔈','🔉','🔊','📢','📣','🔔','🔕','🏁','🚩','🎌','🏴','🏳️','🏳️‍🌈','🏴‍☠️','🇯🇵'],
+    '🌍': ['🌍','🌎','🌏','🌐','🗺️','🧭','🏔️','⛰️','🌋','🗻','🏕️','🏖️','🏜️','🏝️','🌅','🌄','🌠','🎇','🎆','🌇','🌆','🏙️','🌃','🌌','🌉','🌁','🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘','🌙','🌚','🌛','🌜','☀️','🌝','🌞','⭐','🌟','🌠','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌬️','🌀','🌈','🌂','☂️','☔','⛱️','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊','🎄','✨','🎋','🎍','💐','🌸','💮','🏵️','🌹','🥀','🌺','🌻','🌼','🌷','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🍁','🍂','🍃','🍄','🪨','🪵','🪸','🪷'],
+    '👋': ['👋','🤚','🖐️','✋','🖖','👌','🤌','🤏','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','🖕','👇','☝️','👍','👎','✊','👊','🤛','🤜','👏','🙌','👐','🤲','🤝','🙏','✍️','💅','🤳','💪','🦾','🦿','🦵','🦶','👂','🦻','👃','🧠','🫀','🫁','🦷','🦴','👀','👁️','👅','👄','👶','🧒','👦','👧','🧑','👱','👨','🧔','👩','🧓','👴','👵','🙍','🙎','🙅','🙆','💁','🙋','🧏','🙇','🤦','🤷','👮','🕵️','💂','🥷','👷','🤴','👸','👳','👲','🧕','🤵','👰','🤰','🤱','👼','🎅','🤶','🦸','🦹','🧙','🧚','🧛','🧜','🧝','🧞','🧟','💆','💇','🚶','🧍','🧎','🏃','💃','🕺','🕴️','👯','🧖','🧗','🤸','🏌️','🏇','⛷️','🏂','🏋️','🤼','🤽','🤾','🤺','⛹️','🧘','🛀','🛌','👭','👫','👬','💏','💑','👪','👨‍👩‍👦','👨‍👩‍👧','👨‍👩‍👧‍👦','👨‍👩‍👦‍👦','👨‍👩‍👧‍👧','👨‍👦','👨‍👧','👩‍👦','👩‍👧','🗣️','👤','👥','🫂']
+};
+const EMOJI_TAB_NAMES = {
+    '😀': '顔',
+    '🐱': '動物',
+    '🍎': '食べ物',
+    '⚽': 'スポーツ',
+    '🚗': '乗り物',
+    '💡': 'モノ',
+    '❤️': '記号',
+    '🌍': '自然',
+    '👋': '人'
+};
+
+let emojiPickerOpen = false;
+let emojiPickerCurrentTab = '😀';
+
+function toggleEmojiPicker() {
+    const popup = document.getElementById('emoji-picker-popup');
+    emojiPickerOpen = !emojiPickerOpen;
+    popup.style.display = emojiPickerOpen ? 'block' : 'none';
+    if (emojiPickerOpen) {
+        renderEmojiPicker(emojiPickerCurrentTab);
+    }
+}
+
+function renderEmojiPicker(tabKey) {
+    emojiPickerCurrentTab = tabKey;
+    const tabsEl = document.getElementById('emoji-picker-tabs');
+    const gridEl = document.getElementById('emoji-picker-grid');
+
+    // タブ描画
+    tabsEl.innerHTML = '';
+    for (const key of Object.keys(EMOJI_CATEGORIES)) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = key;
+        btn.title = EMOJI_TAB_NAMES[key] || '';
+        const isActive = key === tabKey;
+        btn.style.cssText = `flex:0 0 auto; padding:4px 6px; font-size:1.1rem; border:none; cursor:pointer; transition:background 0.15s; background:${isActive ? '#1e293b' : 'transparent'}; border-radius:${isActive ? '6px 6px 0 0' : '6px'};`;
+        btn.onmouseover = () => { if (key !== emojiPickerCurrentTab) btn.style.background = '#162032'; };
+        btn.onmouseout = () => { if (key !== emojiPickerCurrentTab) btn.style.background = 'transparent'; };
+        btn.onclick = () => renderEmojiPicker(key);
+        tabsEl.appendChild(btn);
+    }
+
+    // 絵文字グリッド描画
+    gridEl.innerHTML = '';
+    const emojis = EMOJI_CATEGORIES[tabKey] || [];
+    for (const em of emojis) {
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.textContent = em;
+        cell.style.cssText = 'font-size:1.3rem; padding:4px; border:none; background:transparent; border-radius:6px; cursor:pointer; transition:background 0.1s; line-height:1.2;';
+        cell.onmouseover = () => cell.style.background = '#334155';
+        cell.onmouseout = () => cell.style.background = 'transparent';
+        cell.onclick = () => selectEmoji(em);
+        gridEl.appendChild(cell);
+    }
+}
+
+function selectEmoji(emoji) {
+    document.getElementById('emoji-select').value = emoji;
+    document.getElementById('emoji-picker-btn').textContent = emoji || '🎲';
+    emojiPickerOpen = false;
+    document.getElementById('emoji-picker-popup').style.display = 'none';
+}
+
+// ピッカー外クリックで閉じる
+document.addEventListener('mousedown', (e) => {
+    if (!emojiPickerOpen) return;
+    const wrapper = document.getElementById('emoji-picker-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+        emojiPickerOpen = false;
+        document.getElementById('emoji-picker-popup').style.display = 'none';
+    }
+});
+
 // AFK切断通知を表示
 function showAfkDisconnectNotice() {
     // 既存の通知があれば削除
@@ -592,12 +682,29 @@ function startGame() {
         return;
     }
 
-    if (name) localStorage.setItem('playerName', name);
-    if (teamInput) localStorage.setItem('playerTeam', teamInput);
-    if (flag) localStorage.setItem('playerFlag', flag);
+    const emojiSelect = document.getElementById('emoji-select');
+    const selectedEmoji = emojiSelect ? emojiSelect.value : '';
+
+    if (name) {
+        localStorage.setItem('playerName', name);
+    } else {
+        localStorage.removeItem('playerName');
+    }
+    if (teamInput) {
+        localStorage.setItem('playerTeam', teamInput);
+    } else {
+        localStorage.removeItem('playerTeam');
+    }
+    if (flag) {
+        localStorage.setItem('playerFlag', flag);
+    } else {
+        localStorage.removeItem('playerFlag');
+    }
+    localStorage.setItem('playerEmoji', selectedEmoji);
 
     if (socket.readyState === WebSocket.OPEN) {
         const joinMsg = { type: 'join', name: name, team: team };
+        if (selectedEmoji) joinMsg.emoji = selectedEmoji;
         if (imageEnabled && uploadedImageBase64) joinMsg.img = uploadedImageBase64;
         socket.send(JSON.stringify(joinMsg));
         document.getElementById('login-modal').style.display = 'none';
@@ -2052,6 +2159,93 @@ function drawResultMapFrame(ctx, rects, w, h, mapFlags) {
     }
 }
 
+// ============================================
+// コメント履歴機能
+// ============================================
+function saveChatHistory(text) {
+    try {
+        let history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+        history = history.filter(h => h !== text);
+        history.unshift(text);
+        if (history.length > 5) history = history.slice(0, 5);
+        localStorage.setItem('chatHistory', JSON.stringify(history));
+    } catch(e) {}
+}
+
+function removeChatHistory(text) {
+    try {
+        let history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+        history = history.filter(h => h !== text);
+        localStorage.setItem('chatHistory', JSON.stringify(history));
+    } catch(e) {}
+}
+
+function showChatHistory() {
+    const dropdown = document.getElementById('chat-history-dropdown');
+    if (!dropdown) return;
+    let history = [];
+    try { history = JSON.parse(localStorage.getItem('chatHistory') || '[]'); } catch(e) {}
+    if (history.length === 0) { dropdown.style.display = 'none'; return; }
+    dropdown.innerHTML = '';
+
+    history.forEach(text => {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex; align-items:center; border-bottom:1px solid #475569;';
+        const label = document.createElement('label');
+        label.textContent = text;
+        label.style.cssText = 'flex:1; padding:8px 10px; color:#e2e8f0; font-size:13px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+        label.onmousedown = function(e) {
+            e.preventDefault();
+            document.getElementById('chat-input').value = text;
+            dropdown.style.display = 'none';
+            sendChat();
+        };
+        label.ontouchstart = function(e) {
+            e.preventDefault();
+            document.getElementById('chat-input').value = text;
+            dropdown.style.display = 'none';
+            sendChat();
+        };
+        label.onmouseenter = function() { item.style.background = '#475569'; };
+        label.onmouseleave = function() { item.style.background = 'transparent'; };
+        const delBtn = document.createElement('div');
+        delBtn.textContent = '\u00d7';
+        delBtn.style.cssText = 'padding:8px 10px; color:#94a3b8; font-size:16px; cursor:pointer; flex-shrink:0;';
+        delBtn.onmousedown = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            removeChatHistory(text);
+            showChatHistory();
+        };
+        delBtn.ontouchstart = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            removeChatHistory(text);
+            showChatHistory();
+        };
+        delBtn.onmouseenter = function() { delBtn.style.color = '#ef4444'; };
+        delBtn.onmouseleave = function() { delBtn.style.color = '#94a3b8'; };
+        item.appendChild(label);
+        item.appendChild(delBtn);
+        dropdown.appendChild(item);
+    });
+    if (dropdown.lastChild) dropdown.lastChild.style.borderBottom = 'none';
+    dropdown.style.display = 'block';
+}
+
+function hideChatHistory() {
+    const dropdown = document.getElementById('chat-history-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+    const input = document.getElementById('chat-input');
+    const dropdown = document.getElementById('chat-history-dropdown');
+    if (dropdown && input && !input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
 function sendChat() {
     if (hasSentChat && !forceJet) {
         return;
@@ -2059,6 +2253,8 @@ function sendChat() {
     const input = document.getElementById('chat-input');
     const text = input.value;
     if (text.trim().length > 0) {
+        saveChatHistory(text.trim());
+        hideChatHistory();
         socket.send(JSON.stringify({ type: 'chat', text: text }));
         input.value = '';
         if (!forceJet) {
@@ -2462,6 +2658,13 @@ window.onload = () => {
     if (savedFlag) {
         const flagSelect = document.getElementById('flag-select');
         if (flagSelect) flagSelect.value = savedFlag;
+    }
+    const savedEmoji = localStorage.getItem('playerEmoji');
+    if (savedEmoji) {
+        const emojiSelect = document.getElementById('emoji-select');
+        if (emojiSelect) emojiSelect.value = savedEmoji;
+        const emojiBtn = document.getElementById('emoji-picker-btn');
+        if (emojiBtn) emojiBtn.textContent = savedEmoji;
     }
 
     initInput();
