@@ -3,6 +3,8 @@
 リアルタイムマルチプレイヤーの陣取りゲームサーバー＆クライアント。
 WebSocket による低遅延通信と HTML5 Canvas によるレンダリングで動作する。
 
+**[DEMOはこちら](https://jintori.open2ch.net:2053/)**
+
 ## ゲーム画面
 
 ![ゲームプレビュー](docs/images/game-preview.png)

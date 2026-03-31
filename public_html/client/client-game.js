@@ -561,10 +561,28 @@ function loop() {
     ctx.lineWidth = 10;
     ctx.strokeRect(0, 0, world.width || 3000, world.height || 3000);
 
-    ctx.fillStyle = COLORS.obstacle;
     obstacles.forEach(o => {
         if (o.x + o.width < viewLeft || o.x > viewRight || o.y + o.height < viewTop || o.y > viewBottom) return;
+        // 背景塗りつぶし
+        ctx.fillStyle = COLORS.obstacle;
         ctx.fillRect(o.x, o.y, o.width, o.height);
+        // 斜線ハッチング
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(o.x, o.y, o.width, o.height);
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+        ctx.lineWidth = 1;
+        const step = 12;
+        const total = o.width + o.height;
+        for (let d = step; d < total; d += step) {
+            ctx.beginPath();
+            ctx.moveTo(o.x + Math.min(d, o.width), o.y + Math.max(0, d - o.width));
+            ctx.lineTo(o.x + Math.max(0, d - o.height), o.y + Math.min(d, o.height));
+            ctx.stroke();
+        }
+        ctx.restore();
+        // 枠線
         ctx.strokeStyle = '#64748b';
         ctx.lineWidth = 2;
         ctx.strokeRect(o.x, o.y, o.width, o.height);
