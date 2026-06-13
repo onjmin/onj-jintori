@@ -1033,6 +1033,7 @@ async function rebuildWinsCache() {
               AND r.mode = 'TEAM'
               AND r.played_at >= DATE_SUB(NOW(), INTERVAL 48 HOUR)
             GROUP BY DATE_FORMAT(r.played_at, '%Y-%m-%d %H:00:00'), HOUR(r.played_at), tr.team_name
+            ON DUPLICATE KEY UPDATE wins = wins + VALUES(wins)
         `);
         await conn.query(`
             INSERT INTO wins_hourly_cache (type, hour_slot, hour_num, name, wins)
@@ -1042,6 +1043,7 @@ async function rebuildWinsCache() {
             WHERE pr.rank_position = 1
               AND r.played_at >= DATE_SUB(NOW(), INTERVAL 48 HOUR)
             GROUP BY DATE_FORMAT(r.played_at, '%Y-%m-%d %H:00:00'), HOUR(r.played_at), pr.player_name
+            ON DUPLICATE KEY UPDATE wins = wins + VALUES(wins)
         `);
 
         // 1日杯キャッシュ再構築（直近30日分）
@@ -1055,6 +1057,7 @@ async function rebuildWinsCache() {
               AND r.mode = 'TEAM'
               AND r.played_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY DATE(r.played_at), DATE_FORMAT(r.played_at, '%m/%d'), tr.team_name
+            ON DUPLICATE KEY UPDATE wins = wins + VALUES(wins)
         `);
         await conn.query(`
             INSERT INTO wins_daily_cache (type, day_slot, day_label, name, wins)
@@ -1064,6 +1067,7 @@ async function rebuildWinsCache() {
             WHERE pr.rank_position = 1
               AND r.played_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY DATE(r.played_at), DATE_FORMAT(r.played_at, '%m/%d'), pr.player_name
+            ON DUPLICATE KEY UPDATE wins = wins + VALUES(wins)
         `);
 
         await conn.commit();
@@ -1125,7 +1129,7 @@ async function initDB() {
                 wins INT NOT NULL DEFAULT 0,
                 PRIMARY KEY (type, hour_slot, name),
                 INDEX idx_hour_slot (hour_slot)
-            )
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         `);
 
         // 1日杯キャッシュテーブル
@@ -1138,8 +1142,18 @@ async function initDB() {
                 wins INT NOT NULL DEFAULT 0,
                 PRIMARY KEY (type, day_slot, name),
                 INDEX idx_day_slot (day_slot)
-            )
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         `);
+
+        // 既存テーブルの文字コード自己修復（旧3バイトutf8で作られた環境向け・冪等）
+        // 絵文字を含む名前が ? に化けて主キー衝突する不具合を防ぐ
+        for (const t of ['wins_hourly_cache', 'wins_daily_cache']) {
+            try {
+                await conn.query(`ALTER TABLE ${t} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+            } catch (e) {
+                console.error(`[DB] charset convert skipped for ${t}:`, e.message);
+            }
+        }
 
         conn.release();
         console.log('[DB] Tables initialized (minimaps, afk_timeouts, wins_cache)');
