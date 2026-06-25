@@ -57,24 +57,6 @@ function bindEvents() {
     const emojiBtn = document.getElementById('emoji-picker-btn');
     if (emojiBtn) emojiBtn.addEventListener('click', () => window.toggleEmojiPicker?.());
 
-    const flagSelect = document.getElementById('flag-select');
-    if (flagSelect) {
-        const flags = [
-            ['','🏳️ なし'],['🇯🇵','🇯🇵 日本'],['🇺🇸','🇺🇸 アメリカ'],
-            ['🇬🇧','🇬🇧 イギリス'],['🇰🇷','🇰🇷 韓国'],['🇨🇳','🇨🇳 中国'],
-            ['🇹🇼','🇹🇼 台湾'],['🇩🇪','🇩🇪 ドイツ'],['🇫🇷','🇫🇷 フランス'],
-            ['🇮🇹','🇮🇹 イタリア'],['🇪🇸','🇪🇸 スペイン'],['🇧🇷','🇧🇷 ブラジル'],
-            ['🇷🇺','🇷🇺 ロシア'],['🇺🇦','🇺🇦 ウクライナ'],['🇮🇳','🇮🇳 インド'],
-            ['🇦🇺','🇦🇺 オーストラリア'],['🇨🇦','🇨🇦 カナダ'],['🇲🇽','🇲🇽 メキシコ'],
-            ['🇸🇦','🇸🇦 サウジ'],['🇹🇭','🇹🇭 タイ'],['🇻🇳','🇻🇳 ベトナム'],
-            ['🇵🇭','🇵🇭 フィリピン'],['🇻🇪','🇻🇪 ベネズエラ'],['🍂','🍂 落ち葉'],
-        ];
-        flags.forEach(([val, label]) => {
-            const opt = document.createElement('option');
-            opt.value = val; opt.textContent = label;
-            flagSelect.appendChild(opt);
-        });
-    }
 }
 bindEvents();
 setupCspDelegation();
