@@ -1355,6 +1355,8 @@ async function loadHourlyGraph(location, defaultTab) {
 // 後方互換: loginモーダル用のショートカット
 function loadTeamWinGraph() { loadHourlyGraph('login'); }
 
+const PRESET_TEAMS = ['無所属', 'おんD軍', 'かろん軍', 'kusa軍'];
+
 function updateTeamSelect() {
     const select = document.getElementById('team-select');
     if (!select) return;
@@ -1372,6 +1374,18 @@ function updateTeamSelect() {
             .sort((a, b) => b.count - a.count);
     }
 
+    // プリセットチームを常に先頭に追加
+    const seen = new Set();
+    const merged = PRESET_TEAMS.map(name => {
+        seen.add(name);
+        const existing = currentTeams.find(t => t.name === name);
+        return existing || { name, count: 0 };
+    });
+    currentTeams.forEach(t => {
+        if (!seen.has(t.name)) merged.push(t);
+    });
+    currentTeams = merged;
+
     const serialized = JSON.stringify(currentTeams);
     if (serialized === knownTeamsSerialized) return;
     knownTeamsSerialized = serialized;
@@ -1384,7 +1398,7 @@ function updateTeamSelect() {
         currentTeams.forEach(t => {
             const opt = document.createElement('option');
             opt.value = t.name;
-            opt.textContent = `${t.name} (${t.count}人)`;
+            opt.textContent = `${t.name}${t.count > 0 ? ` (${t.count}人)` : ''}`;
             select.appendChild(opt);
         });
         if (currentTeams.some(t => t.name === val)) select.value = val;
