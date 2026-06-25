@@ -460,7 +460,7 @@ async function handleJsonMessage(data, p, id, byteLen) {
 
         // チーム名の長さチェック（5文字制限）- 超過はBAN
         const teamChars = Array.from(rawTeam.replace(/[\[\]]/g, ''));
-        if (teamChars.length > 5) {
+        if (teamChars.length > 10) {
             banIP(p.ip, `Team name too long (${teamChars.length} chars)`);
             if (p.ws.readyState === WebSocket.OPEN) {
                 p.ws.close(4002, 'You are banned: invalid team name length');
@@ -487,7 +487,7 @@ async function handleJsonMessage(data, p, id, byteLen) {
 
         // チーム本体部分（国旗除く）の長さチェック（3文字制限）- 超過はBAN
         const teamBodyChars = Array.from(flagResult.teamBody.replace(/[\[\]]/g, ''));
-        if (teamBodyChars.length > 3) {
+        if (teamBodyChars.length > 8) {
             banIP(p.ip, `Team body too long (${teamBodyChars.length} chars, flag excluded)`);
             if (p.ws.readyState === WebSocket.OPEN) {
                 p.ws.close(4002, 'You are banned: invalid team name length');
@@ -605,7 +605,7 @@ async function handleJsonMessage(data, p, id, byteLen) {
         const reqTeamChars = Array.from(rawTeam.replace(/[\[\]]/g, ''));
 
         // チーム名の長さチェック（5文字超過はBAN）
-        if (reqTeamChars.length > 5) {
+        if (reqTeamChars.length > 10) {
             banIP(p.ip, `update_team: Team name too long (${reqTeamChars.length} chars)`);
             if (p.ws.readyState === WebSocket.OPEN) {
                 p.ws.close(4002, 'You are banned: invalid team name length');
@@ -625,7 +625,7 @@ async function handleJsonMessage(data, p, id, byteLen) {
 
         // チーム本体部分（国旗除く）の長さチェック（3文字制限）
         const utBodyChars = Array.from(utFlagResult.teamBody.replace(/[\[\]]/g, ''));
-        if (utBodyChars.length > 3) {
+        if (utBodyChars.length > 8) {
             banIP(p.ip, `update_team: Team body too long (${utBodyChars.length} chars)`);
             if (p.ws.readyState === WebSocket.OPEN) {
                 p.ws.close(4002, 'You are banned: invalid team name length');

@@ -1966,7 +1966,7 @@ function showResultScreen(rankings, winner, teamRankings, nextMode, allTeams, to
                <div style="display:block; margin-top:10px;">
                    <div style="font-size:12px; color:#94a3b8; margin-bottom:5px;">所属チームを選択・入力</div>
                    <div style="display:flex; justify-content:center; gap:5px;">
-                       <input type="text" id="result-team-input" placeholder="チーム名" maxlength="3" 
+                        <input type="text" id="result-team-input" placeholder="チーム名" maxlength="8" 
                            value="${localStorage.getItem('playerTeam') || ''}"
                            oninput="updateResultTeam(this.value)"
                            style="background:#1e293b; border:1px solid #475569; padding:5px; color:#fff; width:100px; text-align:center;">
