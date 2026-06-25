@@ -3,6 +3,58 @@
 リアルタイムマルチプレイヤーの陣取りゲームサーバー＆クライアント。
 WebSocket による低遅延通信と HTML5 Canvas によるレンダリングで動作する。
 
+## Koyeb 無料鯖にデプロイする手順（ワイ用）
+
+### 1. Docker イメージをビルド
+
+```bash
+docker build -t zinti:latest .
+```
+
+### 2. Koyeb にプッシュ
+
+Koyeb のダッシュボード → Create App → Docker で以下を設定：
+
+| 項目 | 設定値 |
+|------|--------|
+| Image | ローカルでビルドしたイメージを Container Registry に push して指定 |
+| Port | `8080` |
+| Instance Type | Eco (小) 0.5 vCPU, 1GB RAM ($5.36/月) または Free |
+
+### 3. 環境変数（必須）
+
+| 変数名 | 説明 |
+|--------|------|
+| `PORT=8080` | Koyeb が期待するポート |
+| `ADMIN_PASSWORD=<任意>` | 管理画面ログイン用パスワード |
+
+### 4. Discord Activity として動かす場合
+
+**環境変数（おまけ）：**
+
+| 変数名 | 説明 |
+|--------|------|
+| `DISCORD_CLIENT_ID=<アプリID>` | Discord Developer Portal で作成したアプリの CLIENT_ID |
+
+**Discord Developer Portal 設定：**
+
+1. https://discord.com/developers/applications でアプリ作成
+2. 「Rich Presence → Activities → Activity Tab → URL Mappings」で `https://<koyeb-app>.koyeb.app/discord.html` を登録
+3. 公開するときはアプリを公開状態にする必要あり
+
+**起動URL：** `https://<koyeb-app>.koyeb.app/discord.html`
+
+### 5. Discord から起動する
+
+ボイスチャンネル → 「アクティビティ」ボタン → アプリを選択 → 自動で discord.html が開く
+
+### 注意点
+
+- MySQL は不要（無くても動く。ランキング保存されないだけ）
+- SSL は Koyeb 側で勝手にやってくれる
+- ブラウザ単体でも動く（Discord Activity 経由じゃなくても URL 開けば遊べる）
+- **Koyeb 無料枠（$0）** は自動スケールダウンするので、誰も遊んでないとサーバーが止まる。初回アクセス時に20秒くらい待たされる。常時起動させたいなら Eco Small（$5.36/月）がおすすめ
+
 **[DEMOはこちら](https://jintori.open2ch.net:2053/)**
 
 ## ゲーム画面

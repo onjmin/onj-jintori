@@ -62,6 +62,16 @@ async function handleHttpRequest(req, res) {
 
     try {
         // ========================================
+        // API: Discord Activity 設定
+        // ========================================
+        if (urlPath === '/api/discord-config') {
+            const discordClientId = process.env.DISCORD_CLIENT_ID || '';
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ discordClientId }));
+            return;
+        }
+
+        // ========================================
         // API: 最近のラウンド一覧
         // ========================================
         if (urlPath === '/api/rounds') {

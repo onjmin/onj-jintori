@@ -1,7 +1,5 @@
 import { DiscordSDK, patchUrlMappings } from '../discord-sdk.js';
 
-const CLIENT_ID = 'YOUR_DISCORD_CLIENT_ID';
-
 // ─── ステータス表示 ──────────────────────────────────────────
 const discordDot = document.getElementById('discord-dot');
 const statusText = document.getElementById('status-text');
@@ -54,19 +52,31 @@ async function boot() {
         ]);
     } catch (_) {}
 
-    let discordName = null;
+    // サーバーからDiscord CLIENT_IDを取得（Koyebの環境変数DISCORD_CLIENT_ID）
+    let CLIENT_ID = '';
     try {
-        const sdk = new DiscordSDK(CLIENT_ID);
-        await Promise.race([
-            sdk.ready(),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000)),
-        ]);
-        const auth = await sdk.commands.authenticate({ access_token: true });
-        discordName = auth.user.username.slice(0, 8);
-        setStatus('connected', `DISCORD: ${auth.user.username}`);
-    } catch (e) {
-        const isTimeout = e?.message === 'timeout';
-        setStatus('error', isTimeout ? 'STANDALONE MODE' : 'DISCORD ERROR');
+        const res = await fetch('/api/discord-config');
+        const cfg = await res.json();
+        CLIENT_ID = cfg.discordClientId || '';
+    } catch (_) {}
+
+    let discordName = null;
+    if (CLIENT_ID) {
+        try {
+            const sdk = new DiscordSDK(CLIENT_ID);
+            await Promise.race([
+                sdk.ready(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000)),
+            ]);
+            const auth = await sdk.commands.authenticate({ access_token: true });
+            discordName = auth.user.username.slice(0, 8);
+            setStatus('connected', `DISCORD: ${auth.user.username}`);
+        } catch (e) {
+            const isTimeout = e?.message === 'timeout';
+            setStatus('error', isTimeout ? 'STANDALONE MODE' : 'DISCORD ERROR');
+        }
+    } else {
+        setStatus('error', 'NO DISCORD CLIENT_ID');
     }
 
     if (bootMsg) bootMsg.remove();
