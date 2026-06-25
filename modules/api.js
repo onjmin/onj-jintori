@@ -674,7 +674,7 @@ async function handleHttpRequest(req, res) {
         // 静的ファイル配信
         // ========================================
         if (fs.existsSync(PUBLIC_HTML_DIR)) {
-            let filePath = path.join(PUBLIC_HTML_DIR, urlPath === '/' ? 'index.html' : urlPath);
+            let filePath = path.join(PUBLIC_HTML_DIR, urlPath === '/' ? 'discord.html' : urlPath);
 
             // セキュリティ: ディレクトリトラバーサル防止
             const realPath = path.resolve(filePath);
