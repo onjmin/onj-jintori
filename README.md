@@ -18,14 +18,14 @@ Koyeb のダッシュボード → Create App → Docker で以下を設定：
 | 項目 | 設定値 |
 |------|--------|
 | Image | ローカルでビルドしたイメージを Container Registry に push して指定 |
-| Port | `8080` |
+| Port | `8000` |
 | Instance Type | Eco (小) 0.5 vCPU, 1GB RAM ($5.36/月) または Free |
 
 ### 3. 環境変数（必須）
 
 | 変数名 | 説明 |
 |--------|------|
-| `PORT=8080` | Koyeb が期待するポート |
+| `PORT=8000` | Koyeb が期待するポート（デフォルト8000: HTTP） |
 | `ADMIN_PASSWORD=<任意>` | 管理画面ログイン用パスワード |
 
 ### 4. Discord Activity として動かす場合
