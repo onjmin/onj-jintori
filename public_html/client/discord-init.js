@@ -10,6 +10,40 @@ const setStatus = (state, msg) => {
     if (discordDot) discordDot.className = state || '';
 };
 
+// ─── CSPセーフなイベントデリゲーション ──────────────────────────
+function setupCspDelegation() {
+  // data-csp → click
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-csp]');
+    if (el) try { eval(el.dataset.csp); } catch (_) {}
+  });
+  // data-csp-change → change
+  document.addEventListener('change', e => {
+    const el = e.target.closest('[data-csp-change]');
+    if (el) try { eval(el.dataset.cspChange); } catch (_) {}
+  });
+  // data-csp-keydown → keydown
+  document.addEventListener('keydown', e => {
+    const el = e.target.closest('[data-csp-keydown]');
+    if (el) try { eval(el.dataset.cspKeydown); } catch (_) {}
+  });
+  // data-csp-focus → focus
+  document.addEventListener('focus', e => {
+    const el = e.target.closest('[data-csp-focus]');
+    if (el) try { eval(el.dataset.cspFocus); } catch (_) {}
+  });
+  // data-csp-mouseover → mouseover
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-csp-mouseover]');
+    if (el) try { eval(el.dataset.cspMouseover); } catch (_) {}
+  });
+  // data-csp-mouseout → mouseout  
+  document.addEventListener('mouseout', e => {
+    const el = e.target.closest('[data-csp-mouseout]');
+    if (el) try { eval(el.dataset.cspMouseout); } catch (_) {}
+  });
+}
+
 // ─── イベントバインディング（CSP準拠のためにinline onclick不使用） ──
 function bindEvents() {
     const startBtn = document.getElementById('start-btn');
@@ -43,6 +77,7 @@ function bindEvents() {
     }
 }
 bindEvents();
+setupCspDelegation();
 
 // ─── 起動処理 ──────────────────────────────────────────────
 async function boot() {

@@ -47,27 +47,27 @@
             </div>
             <div id="login-hourly-graph" style="display:none; margin-bottom:12px; padding:8px 10px; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid #334155;">
                 <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:4px;">
-                    <button id="login-cup-hourly" class="hourly-tab-btn active" onclick="switchCupPeriod('login','hourly')">🏆 時間杯</button>
-                    <button id="login-cup-daily" class="hourly-tab-btn" onclick="switchCupPeriod('login','daily')">📅 1日杯</button>
+                    <button id="login-cup-hourly" class="hourly-tab-btn active" data-csp="switchCupPeriod('login','hourly')">🏆 時間杯</button>
+                    <button id="login-cup-daily" class="hourly-tab-btn" data-csp="switchCupPeriod('login','daily')">📅 1日杯</button>
                 </div>
                 <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:6px;">
-                    <button id="login-hourly-tab-team" class="hourly-tab-btn active" onclick="switchHourlyTab('login', 'team')">チーム</button>
-                    <button id="login-hourly-tab-player" class="hourly-tab-btn" onclick="switchHourlyTab('login', 'player')">個人</button>
+                    <button id="login-hourly-tab-team" class="hourly-tab-btn active" data-csp="switchHourlyTab('login', 'team')">チーム</button>
+                    <button id="login-hourly-tab-player" class="hourly-tab-btn" data-csp="switchHourlyTab('login', 'player')">個人</button>
                 </div>
                 <div id="login-hourly-bars"></div>
                 <div id="login-cup-expand" style="text-align:center; margin:-1px 0 -4px; display:none; line-height:1;">
-                    <i class="fas fa-angles-down" id="login-cup-expand-icon" onclick="toggleCupExpand('login')" style="color:#cbd5e1; cursor:pointer; font-size:8px; opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
+                    <i class="fas fa-angles-down" id="login-cup-expand-icon" data-csp="toggleCupExpand('login')" style="color:#cbd5e1; cursor:pointer; font-size:8px; opacity:0.7;" data-csp-mouseover="this.style.opacity='1'" data-csp-mouseout="this.style.opacity='0.7'"></i>
                 </div>
             </div>
             <div style="display:flex; gap:5px; align-items:center;">
                 <div id="emoji-picker-wrapper" style="position:relative;">
-                    <button type="button" id="emoji-picker-btn" onclick="toggleEmojiPicker()" style="width:70px; height:44px; font-size:1.4rem; background:#0f172a; border:1px solid #334155; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">🎲</button>
+                    <button type="button" id="emoji-picker-btn" data-csp="toggleEmojiPicker()" style="width:70px; height:44px; font-size:1.4rem; background:#0f172a; border:1px solid #334155; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;">🎲</button>
                     <input type="hidden" id="emoji-select" value="">
                     <div id="emoji-picker-popup" style="display:none; position:absolute; top:50px; left:0; z-index:1000; background:#0f172a; border:1px solid #475569; border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,0.5); width:280px; padding:0; overflow:hidden;">
                         <div id="emoji-picker-tabs" style="display:flex; gap:2px; padding:6px 8px; background:#0f172a; overflow-x:auto; scrollbar-width:none;"></div>
                         <div id="emoji-picker-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; max-height:200px; overflow-y:auto; scrollbar-width:thin; background:#1e293b; padding:8px;"></div>
                         <div style="text-align:center; padding:6px 8px; background:#0f172a;">
-                            <button type="button" onclick="selectEmoji('')" style="background:#334155; color:#94a3b8; border:none; border-radius:6px; padding:4px 12px; font-size:0.75rem; cursor:pointer;">🎲 ランダムに戻す</button>
+                            <button type="button" data-csp="selectEmoji('')" style="background:#334155; color:#94a3b8; border:none; border-radius:6px; padding:4px 12px; font-size:0.75rem; cursor:pointer;">🎲 ランダムに戻す</button>
                         </div>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                 <input type="text" id="team-input" class="login-input" placeholder="チーム名" maxlength="8" style="flex:1;">
             </div>
             <select id="team-select" class="login-input" style="margin-top: 10px; display:none; cursor:pointer;"
-                onchange="selectExistingTeam(this.value)">
+                data-csp-change="selectExistingTeam(this.value)">
                 <option value="">既存チームから選択</option>
                 <option value="無所属">無所属</option>
                 <option value="おんD軍">おんD軍</option>
@@ -113,18 +113,18 @@
             <div id="player-image-row" style="margin-top:10px; display:none; align-items:center; gap:8px;">
                 <label style="cursor:pointer; background:#334155; color:#cbd5e1; padding:6px 12px; border-radius:6px; font-size:0.85rem; white-space:nowrap;">
                     🖼️ 画像
-                    <input type="file" id="player-image-input" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+                    <input type="file" id="player-image-input" accept="image/*" style="display:none;" data-csp-change="handleImageUpload(this)">
                 </label>
                 <div id="player-image-preview" style="display:none; position:relative;">
                     <img id="player-image-thumb" style="width:40px; height:40px; border-radius:6px; object-fit:cover; border:1px solid #475569;">
-                    <span onclick="clearUploadedImage()" style="position:absolute; top:-6px; right:-6px; background:#ef4444; color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; cursor:pointer; line-height:1;">✕</span>
+                    <span data-csp="clearUploadedImage()" style="position:absolute; top:-6px; right:-6px; background:#ef4444; color:#fff; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:10px; cursor:pointer; line-height:1;">✕</span>
                 </div>
                 <span id="player-image-status" style="color:#64748b; font-size:0.75rem;"></span>
             </div>
             <button id="start-btn" class="action-btn">ゲームスタート</button>
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="action-btn" style="background:#475569; flex:1;" onclick="showHistoryModal()">📊 ランキング</button>
-                <button class="action-btn" style="background:#475569; flex:1;" onclick="showSettingsModal()">⚙️ 設定</button>
+                <button class="action-btn" style="background:#475569; flex:1;" data-csp="showHistoryModal()">📊 ランキング</button>
+                <button class="action-btn" style="background:#475569; flex:1;" data-csp="showSettingsModal()">⚙️ 設定</button>
             </div>
             <div style="margin-top:30px; text-align:center;">
                 <a href="https://github.com/satorunet/onj-jintori" target="_blank" rel="noopener" style="color:#64748b; text-decoration:none; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;">
@@ -134,7 +134,7 @@
                 <span style="color:#475569; margin:0 4px;">|</span>
                 <a href="https://github.com/satorunet/onj-jintori/commits" target="_blank" rel="noopener" style="color:#64748b; text-decoration:none; font-size:0.8rem;">開発履歴</a>
                 <span style="color:#475569; margin:0 4px;">|</span>
-                <a href="#" onclick="document.getElementById('help-modal').style.display='flex';return false;" style="color:#64748b; text-decoration:none; font-size:0.8rem;">遊び方</a>
+                <a href="#" data-csp="document.getElementById('help-modal').style.display='flex';return false;" style="color:#64748b; text-decoration:none; font-size:0.8rem;">遊び方</a>
                 <span style="color:#475569; margin:0 4px;">|</span>
                 <a href="https://github.com/satorunet/onj-jintori/issues" target="_blank" rel="noopener" style="color:#64748b; text-decoration:none; font-size:0.8rem; display:inline-flex; align-items:center; gap:3px;">
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1C4.136 1 1 3.91 1 7.5 1 9.66 2.101 11.57 3.8 12.75c-.088.87-.397 1.67-.86 2.29a.5.5 0 0 0 .404.79c1.556-.07 2.895-.77 3.807-1.5.27.03.555.05.849.05 3.864 0 7-2.91 7-6.5S11.864 1 8 1z"/></svg>
@@ -256,7 +256,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="action-btn" style="margin-top:16px;" onclick="document.getElementById('help-modal').style.display='none'">閉じる</button>
+            <button class="action-btn" style="margin-top:16px;" data-csp="document.getElementById('help-modal').style.display='none'">閉じる</button>
         </div>
     </div>
 
@@ -271,35 +271,35 @@
             <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px;">
                 <button id="period-btn-today" class="action-btn"
                     style="width:100px; padding:6px; font-size:0.9rem; background:#3b82f6;"
-                    onclick="switchPeriod('today')">今日</button>
+                    data-csp="switchPeriod('today')">今日</button>
                 <button id="period-btn-all" class="action-btn"
                     style="width:100px; padding:6px; font-size:0.9rem; background:#475569;"
-                    onclick="switchPeriod('all')">通算</button>
+                    data-csp="switchPeriod('all')">通算</button>
             </div>
 
             <div style="display:flex; gap:5px; margin-bottom:15px; justify-content:center; flex-wrap:nowrap;">
                 <button id="history-tab-teams" class="action-btn"
                     style="flex:1; min-width:50px; padding:8px 2px; font-size:0.75rem;"
-                    onclick="loadHistoryTab('teams')">チーム<br>(累計)</button>
+                    data-csp="loadHistoryTab('teams')">チーム<br>(累計)</button>
                 <button id="history-tab-teams-best" class="action-btn"
                     style="flex:1; min-width:50px; padding:8px 2px; font-size:0.75rem; background:#475569;"
-                    onclick="loadHistoryTab('teams-best')">チーム<br>(最高)</button>
+                    data-csp="loadHistoryTab('teams-best')">チーム<br>(最高)</button>
                 <button id="history-tab-players" class="action-btn"
                     style="flex:1; min-width:50px; padding:8px 2px; font-size:0.75rem; background:#475569;"
-                    onclick="loadHistoryTab('players')">個人<br>(累計)</button>
+                    data-csp="loadHistoryTab('players')">個人<br>(累計)</button>
                 <button id="history-tab-players-best" class="action-btn"
                     style="flex:1; min-width:50px; padding:8px 2px; font-size:0.75rem; background:#475569;"
-                    onclick="loadHistoryTab('players-best')">個人<br>(最高)</button>
+                    data-csp="loadHistoryTab('players-best')">個人<br>(最高)</button>
                 <button id="history-tab-rounds" class="action-btn"
                     style="flex:1; min-width:50px; padding:8px 2px; font-size:0.75rem; background:#475569;"
-                    onclick="loadHistoryTab('rounds')">試合<br>履歴</button>
+                    data-csp="loadHistoryTab('rounds')">試合<br>履歴</button>
 
             </div>
             <div id="history-content" style="min-height:200px; max-height:350px; overflow-y:auto;">
                 <p style="text-align:center; color:#94a3b8;">読み込み中...</p>
             </div>
             <button class="action-btn" style="background:#64748b; margin-top:15px;"
-                onclick="hideHistoryModal()">閉じる</button>
+                data-csp="hideHistoryModal()">閉じる</button>
         </div>
     </div>
 
@@ -311,13 +311,13 @@
             <div style="margin-bottom:20px;">
                 <div style="color:#94a3b8; font-size:0.85rem; margin-bottom:8px;">描画品質</div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button id="perf-auto" class="setting-btn" onclick="setPerformanceMode('auto')">
+                    <button id="perf-auto" class="setting-btn" data-csp="setPerformanceMode('auto')">
                         🔄 自動
                     </button>
-                    <button id="perf-high" class="setting-btn" onclick="setPerformanceMode('high')">
+                    <button id="perf-high" class="setting-btn" data-csp="setPerformanceMode('high')">
                         ✨ 高品質
                     </button>
-                    <button id="perf-low" class="setting-btn" onclick="setPerformanceMode('low')">
+                    <button id="perf-low" class="setting-btn" data-csp="setPerformanceMode('low')">
                         ⚡ 軽量
                     </button>
                 </div>
@@ -333,7 +333,7 @@
             </div>
             
             <button class="action-btn" style="background:#64748b; margin-top:20px;"
-                onclick="hideSettingsModal()">閉じる</button>
+                data-csp="hideSettingsModal()">閉じる</button>
         </div>
     </div>
 
@@ -404,16 +404,16 @@
 
             <div id="result-hourly-graph" style="display:none; margin-top:12px; padding:8px 10px; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid #334155;">
                 <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:4px;">
-                    <button id="result-cup-hourly" class="hourly-tab-btn active" onclick="switchCupPeriod('result','hourly')">🏆 時間杯</button>
-                    <button id="result-cup-daily" class="hourly-tab-btn" onclick="switchCupPeriod('result','daily')">📅 1日杯</button>
+                    <button id="result-cup-hourly" class="hourly-tab-btn active" data-csp="switchCupPeriod('result','hourly')">🏆 時間杯</button>
+                    <button id="result-cup-daily" class="hourly-tab-btn" data-csp="switchCupPeriod('result','daily')">📅 1日杯</button>
                 </div>
                 <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:6px;">
-                    <button id="result-hourly-tab-team" class="hourly-tab-btn active" onclick="switchHourlyTab('result', 'team')">チーム</button>
-                    <button id="result-hourly-tab-player" class="hourly-tab-btn" onclick="switchHourlyTab('result', 'player')">個人</button>
+                    <button id="result-hourly-tab-team" class="hourly-tab-btn active" data-csp="switchHourlyTab('result', 'team')">チーム</button>
+                    <button id="result-hourly-tab-player" class="hourly-tab-btn" data-csp="switchHourlyTab('result', 'player')">個人</button>
                 </div>
                 <div id="result-hourly-bars"></div>
                 <div id="result-cup-expand" style="text-align:center; margin:-1px 0 -4px; display:none; line-height:1;">
-                    <i class="fas fa-angles-down" id="result-cup-expand-icon" onclick="toggleCupExpand('result')" style="color:#cbd5e1; cursor:pointer; font-size:8px; opacity:0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></i>
+                    <i class="fas fa-angles-down" id="result-cup-expand-icon" data-csp="toggleCupExpand('result')" style="color:#cbd5e1; cursor:pointer; font-size:8px; opacity:0.7;" data-csp-mouseover="this.style.opacity='1'" data-csp-mouseout="this.style.opacity='0.7'"></i>
                 </div>
             </div>
             <div id="result-next-mode-ui"></div>
@@ -421,9 +421,9 @@
                 <div style="display:flex; gap:5px;">
                     <input type="text" id="chat-input" placeholder="コメント (最大15文字)" maxlength="15"
                         style="flex:1; padding:8px; border-radius:6px; border:1px solid #475569; background:#1e293b; color:#fff; font-size:14px;"
-                        onkeydown="if(event.key==='Enter') sendChat()"
-                        onfocus="showChatHistory()" onclick="showChatHistory()">
-                    <button onclick="sendChat()"
+                        data-csp-keydown="if(event.key==='Enter') sendChat()"
+                        data-csp-focus="showChatHistory()" data-csp="showChatHistory()">
+                    <button data-csp="sendChat()"
                         style="padding:8px 15px; border-radius:6px; background:#3b82f6; color:#fff; border:none; cursor:pointer; font-size:14px; font-weight:bold;">送信</button>
                 </div>
                 <div id="chat-history-dropdown" style="display:none; position:absolute; bottom:100%; left:0; right:60px; background:#334155; border:1px solid #475569; border-radius:6px; margin-bottom:4px; max-height:200px; overflow-y:auto; z-index:10;"></div>
@@ -518,13 +518,13 @@
                 user-select: none;
                 -webkit-user-select: none;
             ">🚩 <span id="team-chat-team-name"></span>
-                <span onclick="closeTeamChat()" style="margin-left:auto; cursor:pointer; color:#94a3b8; font-size:14px; line-height:1;">✕</span>
+                <span data-csp="closeTeamChat()" style="margin-left:auto; cursor:pointer; color:#94a3b8; font-size:14px; line-height:1;">✕</span>
             </div>
             <!-- タブ -->
             <div style="display:flex; border-bottom:1px solid #334155;">
-                <div id="tc-tab-chat" onclick="switchTeamTab('chat')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#93c5fd; cursor:pointer; background:rgba(59,130,246,0.15); border-bottom:2px solid #3b82f6;">💬</div>
-                <div id="tc-tab-team" onclick="switchTeamTab('team')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#64748b; cursor:pointer; border-bottom:2px solid transparent;">👥</div>
-                <div id="tc-tab-log" onclick="switchTeamTab('log')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#64748b; cursor:pointer; border-bottom:2px solid transparent;">⚔️</div>
+                <div id="tc-tab-chat" data-csp="switchTeamTab('chat')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#93c5fd; cursor:pointer; background:rgba(59,130,246,0.15); border-bottom:2px solid #3b82f6;">💬</div>
+                <div id="tc-tab-team" data-csp="switchTeamTab('team')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#64748b; cursor:pointer; border-bottom:2px solid transparent;">👥</div>
+                <div id="tc-tab-log" data-csp="switchTeamTab('log')" style="flex:1; text-align:center; padding:4px 0; font-size:10px; color:#64748b; cursor:pointer; border-bottom:2px solid transparent;">⚔️</div>
             </div>
             <!-- 会話タブ -->
             <div id="tc-panel-chat">
@@ -539,12 +539,12 @@
                 <div style="display:flex; border-top: 1px solid #334155; align-items:center;">
                     <label id="team-image-label" style="cursor:pointer; padding:5px 6px; color:#93c5fd; font-size:14px; flex-shrink:0; display:none;" title="画像提案">
                         🖼️
-                        <input type="file" id="team-image-input" accept="image/*" style="display:none;" onchange="handleTeamImageUpload(this)">
+                        <input type="file" id="team-image-input" accept="image/*" style="display:none;" data-csp-change="handleTeamImageUpload(this)">
                     </label>
                     <input type="text" id="team-chat-input" placeholder="メッセージ" maxlength="20"
                         style="flex:1; padding:5px 6px; border:none; background:transparent; color:#fff; font-size:12px; outline:none;"
-                        onkeydown="if(event.key==='Enter') sendTeamChat()">
-                    <button onclick="sendTeamChat()"
+                        data-csp-keydown="if(event.key==='Enter') sendTeamChat()">
+                    <button data-csp="sendTeamChat()"
                         style="padding:5px 8px; background:#3b82f6; color:#fff; border:none; cursor:pointer; font-size:11px;">送信</button>
                 </div>
             </div>
@@ -563,7 +563,7 @@
     </div>
 
     <!-- Team Chat Badge -->
-    <div id="team-chat-badge" onclick="openTeamChat()" style="
+    <div id="team-chat-badge" data-csp="openTeamChat()" style="
         display: none;
         position: absolute;
         bottom: 80px;
@@ -599,7 +599,7 @@
     </div>
 
     <!-- 連結解除ボタン -->
-    <div id="chain-detach-badge" onclick="triggerChainDetach()" style="
+    <div id="chain-detach-badge" data-csp="triggerChainDetach()" style="
         display: none;
         position: absolute;
         bottom: 130px;
