@@ -1,0 +1,19 @@
+{
+  "name": "zinti",
+  "version": "5.0.0",
+  "description": "マルチプレイヤー陣取りゲーム",
+  "private": true,
+  "main": "jintori.js",
+  "scripts": {
+    "start": "node jintori.js",
+    "start:team": "node jintori.js team",
+    "start:debug": "node jintori.js debug"
+  },
+  "dependencies": {
+    "ws": "^8.0.0",
+    "mysql2": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -3,11 +3,11 @@
 // ============================================
 
 // Server URL
-//const SERVER_URL = 'wss://new-node01.open2ch.net:2087';
-const SERVER_URL = 'wss://jintori.open2ch.net:2053';
+// Discord Activity の場合は window.__SERVER_URL / window.__API_BASE で上書き可能
+const SERVER_URL = window.__SERVER_URL || 'wss://jintori.open2ch.net:2053';
 
 // API Base
-const API_BASE = 'https://jintori.open2ch.net:2053';
+const API_BASE = window.__API_BASE || 'https://jintori.open2ch.net:2053';
 
 // Zoom Level
 const ZOOM_LEVEL = 0.8;
